@@ -1,0 +1,53 @@
+{
+  "movies": [
+    {
+      "title": "Terminator",
+      "watch_dates": [
+        "2024-11-08",
+        "2024-11-08"
+      ],
+      "status": "complete",
+      "score": 6,
+      "comments": "n/a"
+    },
+    {
+      "title": "Die Hard",
+      "watch_dates": [
+        "2024-10-12",
+        "2024-01-21",
+        "2023-12-31"
+      ],
+      "status": "complete",
+      "score": 7,
+      "comments": "Very good movie!"
+    }
+  ],
+  "series": [
+    {
+        "title": "Euphoria",
+        "status": "watching",
+        "seasons": 2,
+        "season_1": {
+            "episode_1": "2022-10-10",
+            "episode_2": "2022-10-10",
+            "episode_3": "2022-10-11",
+            "episode_4": "2022-10-11",
+            "episode_5": "",
+            "episode_6": "",
+            "episode_7": "",
+            "episode_8": ""
+        },
+        "season_2": {
+            "episode_1": "",
+            "episode_2": "",
+            "episode_3": "",
+            "episode_4": "",
+            "episode_5": "",
+            "episode_6": "",
+            "episode_7": "",
+            "episode_8": ""
+        },
+        "notes": "good series :)"
+    }
+]
+}

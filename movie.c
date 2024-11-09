@@ -1,55 +1,67 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-
-int find_movie(FILE *movies, char find[]) {
-
-    char buffer[256];
-    int lineCount = 1;
-
-    while (fgets(buffer, sizeof(buffer), movies)) {
-
-        for (int i = 0; i < sizeof(buffer); i++) {
-            if (buffer[i] == find[0]) {
-                int found = 1;
-                for (int j = 1; j < strlen(find); j++) {
-                    if (buffer[i+j] != find[j]) found = 0;
-                }
-                if (found) {
-                    // TODO rewind pointer to file start
-                    return lineCount/5+1; // Return the movie number
-                }
-            }
-        }
-
-        lineCount++;
-
-    }
-
-    return -1;
-
-}
-    
-void print_movie(FILE *movies, int movieNum) {
-
-}
-
+#include <cJSON.h>
 
 
 
 int main(void) {
 
-FILE *movies = fopen("movies", "r");
+char title[20];
+char watchdates[11];
+char status[11];
+int score;
+char comments[256];
 
-char find[32];
-printf("Enter movie to find: ");
-fgets(find, 32, stdin);
-find[strcspn(find, "\n")] = '\0';  // Remove newline from find[]
-
-if (movies == NULL) {
-    perror("Error opening file\n");
+// open file
+FILE *fp = fopen("data.json", "a+");
+if (fp == NULL) {
+    printf("Error: unable to open fp.json\n");
     return 1;
 }
 
-printf("Movie Number: %d", find_movie(movies, find));
-fclose(movies);
+// get file size
+fseek(fp, 0, SEEK_END);
+long file_size = ftell(fp);
+fseek(fp, 0, SEEK_SET);
+
+// allocate buffer with file size
+char *buffer = (char *)malloc(file_size + 1); // + 1 for \0
+if (buffer == NULL) {
+    printf("Error: memory allocation failed");
+    fclose(fp);
+    return 1;
+}
+
+// put file into buffer
+fread(buffer, 1, file_size, fp); // 1 = 1 byte per character
+fclose (fp);
+
+// add null terminator (\0)
+buffer[file_size] = '\0';
+
+// parse into cJSON object
+cJSON *json = cJSON_Parse(buffer);
+if (json == NULL) { // TODO this would be a good place to use cJSON_GetErrorPtr()
+    printf("Error: parsing buffer failed");
+    return 1;
+} 
+
+// get movies object
+cJSON *movies = cJSON_GetObjectItemCaseSensitive(json, "movies");
+if (!cJSON_IsArray(movies)) {
+    printf("Error: \"movies\" is not an array");
+    return 1;
+}
+
+int movie_count = cJSON_GetArraySize(movies);
+for (int i = 0; i < movie_count; i++) {
+    cJSON *movie = cJSON_GetArrayItem(movies, i);
+    cJSON *title = cJSON_GetObjectItemCaseSensitive(movie, "title");
+    printf("Movie %d: %s\n", i+1, cJSON_GetStringValue(title));
+}
+
+cJSON_Delete(json);
+free(buffer);
+// fclose(fp);
 }
